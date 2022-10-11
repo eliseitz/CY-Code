@@ -1,0 +1,58 @@
+library(tidyverse)
+setwd("C:/Users/City Year/OneDrive - City Year/Focus List Code")
+
+#Import files
+Student_demo<-read.csv("C:/Users/City Year/OneDrive - City Year/Focus List Code/student_demographics.csv")
+Student_grades<-read.csv("C:/Users/City Year/OneDrive - City Year/Focus List Code/student_progress_marking_period_grades_2021-2022.csv")
+Student_ADA<-read.csv("C:/Users/City Year/OneDrive - City Year/Focus List Code/student_average_daily_attendance_2021-2022.csv" )
+
+#filter to core courses
+CCLit_grades<-subset(Student_grades,Student_grades$Course_Name=="CHGO READING FRMWK"|Student_grades$Course_Name=="English as a Second Language 3"|Student_grades$Course_Name=="English I R"|Student_grades$Course_Name=="HS1 English I"|Student_grades$Course_Name=="HS1 English II"|Student_grades$Course_Name=="HS1 English I Dbl"|Student_grades$Course_Name=="HS1 IB MYP English I"|Student_grades$Course_Name=="HS2 English I"|Student_grades$Course_Name=="HS2 IB MYP English I"|Student_grades$Course_Name=="RS1 English I"|Student_grades$Course_Name=="RS1 English II"|Student_grades$Course_Name=="RS1 English I Dbl"|Student_grades$Course_Name=="RS1 English II Dbl"|Student_grades$Course_Name=="RS1 English IV"|Student_grades$Course_Name=="RS1 ESL I"|Student_grades$Course_Name=="RS1 IB MYP English I"|Student_grades$Course_Name=="RS1 Reading Lang Arts Dbl"|Student_grades$Course_Name=="RS1 Two Per ESL II"|Student_grades$Course_Name=="RS2 English IV"|Student_grades$Course_Name=="RS2 IB MYP English I"|Student_grades$Course_Name=="RS2 Two Per ESL I"|Student_grades$Course_Name=="RS2 Two Per ESL II"|Student_grades$Course_Name=="S1 English as Second Language II"|Student_grades$Course_Name=="LANGUAGE ARTS 201"|Student_grades$Course_Name=="ENGLISH I"|Student_grades$Course_Name=="HS2 English II"|Student_grades$Course_Name=="RS2 English II"|Student_grades$Course_Name=="RS2 English I"|Student_grades$Course_Name=="RS2 English as a Second Language III"|Student_grades$Course_Name=="RS2 English  as a Second Language II"|Student_grades$Course_Name=="RS1 English  as a Second Language II"|Student_grades$Course_Name=="RS1 Two Per ESL I"|Student_grades$Course_Name=="RS1 English as a Second  Language III"|Student_grades$Course_Name=="RS2 English as a Second  Language III"|Student_grades$Course_Name=="S1 English I"|Student_grades$Course_Name=="RS1 English III"|Student_grades$Course_Name=="S1 English II"|Student_grades$Course_Name=="RS1 IB MYP English II"|Student_grades$Course_Name=="AS1 AP English Language and Composition")
+CCMath_grades<-subset(Student_grades,Student_grades$Course_Name=="Geometry Extended"|Student_grades$Course_Name=="HS1 Algebra Dbl"|Student_grades$Course_Name=="HS1 IB MYP Algebra"|Student_grades$Course_Name=="HS1 IB MYP Integrated Mathematics I"|Student_grades$Course_Name=="HS1 Integrated Math I"|Student_grades$Course_Name=="HS2 IB MYP Algebra"|Student_grades$Course_Name=="HS2 IB MYP Integrated Mathematics I"|Student_grades$Course_Name=="HS2 Integrated Math I"|Student_grades$Course_Name=="IVHS Algebra"|Student_grades$Course_Name=="MATHEMATICS STD"|Student_grades$Course_Name=="NS1 HS Algebra for MG"|Student_grades$Course_Name=="NS2 HS Algebra for MG"|Student_grades$Course_Name=="RS1 Algebra Dbl"|Student_grades$Course_Name=="RS1 Algebra I Extended Dbl"|Student_grades$Course_Name=="RS1 Geometry"|Student_grades$Course_Name=="RS1 IB MYP Integrated Mathematics I"|Student_grades$Course_Name=="RS1 Integrated Math II"|Student_grades$Course_Name=="RS2 Algebra 1"|Student_grades$Course_Name=="RS2 IB MYP Integrated Mathematics I"|Student_grades$Course_Name=="HS1 Integrated Math II"|Student_grades$Course_Name=="RS1 Algebra 1"|Student_grades$Course_Name=="RS1 Integrated Math I"|Student_grades$Course_Name=="RS2 Geometry"|Student_grades$Course_Name=="RS2 Integrated Math II"|Student_grades$Course_Name=="HS2 Integrated Math II"|Student_grades$Course_Name=="RS2 Integrated Math I"|Student_grades$Course_Name=="HS1 Algebra"|Student_grades$Course_Name=="HS1 Adv Algebra with Trigonometry"|Student_grades$Course_Name=="HS1 IB MYP Geometry"|Student_grades$Course_Name=="HS1 Algebra 1"|Student_grades$Course_Name=="S1 Algebra 1"|Student_grades$Course_Name=="HS1 Algebra II - Trig - Pre-Calculus"|Student_grades$Course_Name=="HS1 Geometry"|Student_grades$Course_Name=="RS1 Adv  Algebra With Trigonometry"|Student_grades$Course_Name=="RS1 Integrated Math III"|Student_grades$Course_Name=="S1 Integrated Math II"|Student_grades$Course_Name=="RS2 Adv Algebra With Trigonometry"|Student_grades$Course_Name=="HS2 Algebra 1"|Student_grades$Course_Name=="HS2 Geometry"|Student_grades$Course_Name=="HS2 IB MYP Geometry"|Student_grades$Course_Name=="RS2 Financial Algebra"|Student_grades$Course_Name=="RS1 IB MYP Algebra 1"|Student_grades$Course_Name=="RS2 IB MYP Algebra 1")
+
+#filter literacy grades to proper marking periods
+CCLit_grades_1<-subset(CCLit_grades,CCLit_grades$Marking_Period=="FSS"|CCLit_grades$Marking_Period=="FN")
+CCLit_grades_2<-subset(CCLit_grades,CCLit_grades$Marking_Period=="SS"|CCLit_grades$Marking_Period=="RC4")
+antiJoinGrades <- anti_join(CCLit_grades_2,CCLit_grades_1,by='Student_ID')
+CCLit_grades_final<- rbind(CCLit_grades_1,antiJoinGrades)
+colnames(CCLit_grades_final)[colnames(CCLit_grades_final) == "Grade_Value"] = "Lit_Grade_Value"
+colnames(CCLit_grades_final)[colnames(CCLit_grades_final) == "Letter_Grade"] = "ELA_Letter_Grade"
+
+#filter Math grades to proper marking periods
+CCMath_grades_1<-subset(CCMath_grades,CCMath_grades$Marking_Period=="FSS"|CCMath_grades$Marking_Period=="FN")
+CCMath_grades_2<-subset(CCMath_grades,CCMath_grades$Marking_Period=="SS"|CCMath_grades$Marking_Period=="RC4")
+antiJoinGrades2 <- anti_join(CCMath_grades_2,CCMath_grades_1,by='Student_ID')
+CCMath_grades_final<- rbind(CCMath_grades_1,antiJoinGrades2)
+colnames(CCMath_grades_final)[colnames(CCMath_grades_final) == "Grade_Value"] = "Math_Grade_Value"
+colnames(CCMath_grades_final)[colnames(CCMath_grades_final) == "Letter_Grade"] = "Math_Letter_Grade"
+
+#filter to relevant marking period (5W8)
+last_ADA<-subset(Student_ADA,Student_ADA$MARKING_PERIOD=="5W8")
+colnames(last_ADA)[colnames(last_ADA) == "STUDENT_ID"] = "Student_ID"
+
+#join demographics, grades, and attendance
+demo_ada <- left_join(Student_demo,last_ADA,by="Student_ID")
+demo_ada_lit<- left_join(demo_ada,CCLit_grades_final,by="Student_ID")
+Focus_List<- left_join(demo_ada_lit,CCMath_grades_final,by="Student_ID")
+
+#create column for math_focus list eligibility based on selection criteria of grades and attendance
+Focus_List$math_focus1 <- as.numeric(ifelse(Focus_List$Math_Grade_Value == "2" & Focus_List$ADA_VALUE>=.85
+                                            ,"1", ""))
+Focus_List$math_focus2 <- as.numeric(ifelse(Focus_List$Math_Grade_Value == "1" & Focus_List$ADA_VALUE>=.85
+                                           ,"2", ""))
+Focus_List$math_focus3 <- as.numeric(ifelse(Focus_List$Math_Grade_Value == "3" & Focus_List$ADA_VALUE<.9
+                                            ,"3", ""))
+Focus_List$math_focus<-coalesce(Focus_List$math_focus1,Focus_List$math_focus2,Focus_List$math_focus3)
+
+#create column for ELA_focus list eligibility based on selection criteria of grades and attendance
+Focus_List$ELA_focus1 <- as.numeric(ifelse(Focus_List$Lit_Grade_Value == "2" & Focus_List$ADA_VALUE>=.85
+                                            ,"1", ""))
+Focus_List$ELA_focus2 <- as.numeric(ifelse(Focus_List$Lit_Grade_Value == "1" & Focus_List$ADA_VALUE>=.85
+                                            ,"2", ""))
+Focus_List$ELA_focus3 <- as.numeric(ifelse(Focus_List$Lit_Grade_Value == "3" & Focus_List$ADA_VALUE<.9
+                                            ,"3", ""))
+Focus_List$ELA_focus<-coalesce(Focus_List$ELA_focus1,Focus_List$ELA_focus2,Focus_List$ELA_focus3)
+
+#Format and write completed focus list table
+Focus_List$Name<-paste(Focus_List$First_Name,Focus_List$Last_Name)
+Focus_final<-Focus_List[c(54,9,5,11,15,22,36,49,50)]
