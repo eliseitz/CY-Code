@@ -54,5 +54,7 @@ Focus_List$ELA_focus3 <- as.numeric(ifelse(Focus_List$Lit_Grade_Value == "3" & F
 Focus_List$ELA_focus<-coalesce(Focus_List$ELA_focus1,Focus_List$ELA_focus2,Focus_List$ELA_focus3)
 
 #Format and write completed focus list table
+colnames(Focus_List)
 Focus_List$Name<-paste(Focus_List$First_Name,Focus_List$Last_Name)
-Focus_final<-Focus_List[c(54,9,5,11,15,22,36,49,50)]
+Focus_final<-Focus_List[c(54,9,5,11,15,22,36,49,53)]
+write.csv(Focus_final,"C:/Users/City Year/OneDrive - City Year/SY23 Focus List Report.csv")
