@@ -34,27 +34,72 @@ colnames(last_ADA)[colnames(last_ADA) == "STUDENT_ID"] = "Student_ID"
 demo_ada <- left_join(Student_demo,last_ADA,by="Student_ID")
 demo_ada_lit<- left_join(demo_ada,CCLit_grades_final,by="Student_ID")
 Focus_List<- left_join(demo_ada_lit,CCMath_grades_final,by="Student_ID")
+Focus_List$Student_Name<-paste(Focus_List$First_Name,Focus_List$Last_Name)
 
-#create column for math_focus list eligibility based on selection criteria of grades and attendance
-Focus_List$math_focus1 <- as.numeric(ifelse(Focus_List$Math_Grade_Value == "2" & Focus_List$ADA_VALUE>=.85
+#Split into HS and ES
+HS_Focus_List<-subset(Focus_List, Focus_List$Grade=="9"|Focus_List$Grade=="10"|Focus_List$Grade=="11")
+ES_Focus_List<-subset(Focus_List, Focus_List$Grade=="3"|Focus_List$Grade=="4"|Focus_List$Grade=="5"|Focus_List$Grade=="6"|Focus_List$Grade=="7"|Focus_List$Grade=="8")
+
+#Create On Track scores for ES
+ES_Focus_List$On_Track_10 <- as.numeric(ifelse(ES_Focus_List$ADA_VALUE<.85
+                                               ,"10", ""))
+ES_Focus_List$On_Track_20 <- as.numeric(ifelse((ES_Focus_List$ADA_VALUE>=.85 & ES_Focus_List$ADA_VALUE<.875)|
+                                               ((ES_Focus_List$Math_Grade_Value == "0"|ES_Focus_List$Lit_Grade_Value == "0") & ES_Focus_List$ADA_VALUE>.85)|
+                                                 ((ES_Focus_List$Math_Grade_Value == "1"|ES_Focus_List$Lit_Grade_Value == "1") & (ES_Focus_List$ADA_VALUE>=.875 & ES_Focus_List$ADA_VALUE<.925))
+                                                 ,"20", ""))
+ES_Focus_List$On_Track_30 <- as.numeric(ifelse(((ES_Focus_List$Math_Grade_Value == "1"|ES_Focus_List$Lit_Grade_Value == "1") & (ES_Focus_List$ADA_VALUE>=.925 & ES_Focus_List$ADA_VALUE<.975))|
+                                               ((ES_Focus_List$Math_Grade_Value == "2"|ES_Focus_List$Lit_Grade_Value == "2") & (ES_Focus_List$ADA_VALUE>=.875 & ES_Focus_List$ADA_VALUE<.925))
+                                               ,"30", ""))
+ES_Focus_List$On_Track_40 <- as.numeric(ifelse(((ES_Focus_List$Math_Grade_Value == "1"|ES_Focus_List$Lit_Grade_Value == "1") & ES_Focus_List$ADA_VALUE>=.975)|
+                                                 ((ES_Focus_List$Math_Grade_Value == "2"|ES_Focus_List$Lit_Grade_Value == "2") & (ES_Focus_List$ADA_VALUE>=.925 & ES_Focus_List$ADA_VALUE<.975))|
+                                                 ((ES_Focus_List$Math_Grade_Value == "3"|ES_Focus_List$Lit_Grade_Value == "3") & (ES_Focus_List$ADA_VALUE>=.875 & ES_Focus_List$ADA_VALUE<.925))|
+                                                 ((ES_Focus_List$Math_Grade_Value == "4"|ES_Focus_List$Lit_Grade_Value == "4") & (ES_Focus_List$ADA_VALUE>=.875 & ES_Focus_List$ADA_VALUE<.90))
+                                               ,"40", ""))
+ES_Focus_List$On_Track_50 <- as.numeric(ifelse(((ES_Focus_List$Math_Grade_Value == "3"|ES_Focus_List$Lit_Grade_Value == "3") & ES_Focus_List$ADA_VALUE>=.975)|
+                                                 ((ES_Focus_List$Math_Grade_Value == "4"|ES_Focus_List$Lit_Grade_Value == "4") & ES_Focus_List$ADA_VALUE>=.95)|
+                                                 ((ES_Focus_List$Math_Grade_Value == "5"|ES_Focus_List$Lit_Grade_Value == "5") & ES_Focus_List$ADA_VALUE>=.90)
+                                               ,"50", ""))
+ES_Focus_List$On_Track_Score<-coalesce(ES_Focus_List$On_Track_10,ES_Focus_List$On_Track_20,ES_Focus_List$On_Track_30,ES_Focus_List$On_Track_40,ES_Focus_List$On_Track_50)
+
+#ES create column for math_focus list eligibility based on selection criteria or grades and on track score
+ES_Focus_List$math_focus1 <- as.numeric(ifelse(ES_Focus_List$Math_Grade_Value == "2" & ES_Focus_List$On_Track_Score=="40"
+                                               ,"1", ""))
+ES_Focus_List$math_focus2 <- as.numeric(ifelse(ES_Focus_List$Math_Grade_Value == "1" & (ES_Focus_List$On_Track_Score=="30"|ES_Focus_List$On_Track_Score=="40"|ES_Focus_List$On_Track_Score=="50")
+                                               ,"2", ""))
+ES_Focus_List$math_focus3 <- as.numeric(ifelse(ES_Focus_List$Math_Grade_Value == "3" & ES_Focus_List$On_Track_Score=="40"
+                                               ,"3", ""))
+ES_Focus_List$math_focus<-coalesce(ES_Focus_List$math_focus1,ES_Focus_List$math_focus2,ES_Focus_List$math_focus3)
+
+#ES create column for ELA_focus list eligibility based on selection criteria or grades and on track score
+ES_Focus_List$ELA_focus1 <- as.numeric(ifelse(ES_Focus_List$Lit_Grade_Value == "2" & ES_Focus_List$ADA_VALUE=="40"
+                                              ,"1", ""))
+ES_Focus_List$ELA_focus2 <- as.numeric(ifelse(ES_Focus_List$Lit_Grade_Value == "1" & (ES_Focus_List$ADA_VALUE=="30"|ES_Focus_List$ADA_VALUE=="40"|ES_Focus_List$ADA_VALUE=="50")
+                                              ,"2", ""))
+ES_Focus_List$ELA_focus3 <- as.numeric(ifelse(ES_Focus_List$Lit_Grade_Value == "3" & ES_Focus_List$ADA_VALUE=="40"
+                                              ,"3", ""))
+ES_Focus_List$ELA_focus<-coalesce(ES_Focus_List$ELA_focus1,ES_Focus_List$ELA_focus2,ES_Focus_List$ELA_focus3)
+
+#HS create column for math_focus list eligibility based on selection criteria of grades and attendance
+HS_Focus_List$math_focus1 <- as.numeric(ifelse(HS_Focus_List$Math_Grade_Value == "2" & HS_Focus_List$ADA_VALUE>=.85
                                             ,"1", ""))
-Focus_List$math_focus2 <- as.numeric(ifelse(Focus_List$Math_Grade_Value == "1" & Focus_List$ADA_VALUE>=.85
+HS_Focus_List$math_focus2 <- as.numeric(ifelse(HS_Focus_List$Math_Grade_Value == "1" & HS_Focus_List$ADA_VALUE>=.85
                                            ,"2", ""))
-Focus_List$math_focus3 <- as.numeric(ifelse(Focus_List$Math_Grade_Value == "3" & Focus_List$ADA_VALUE<.9
+HS_Focus_List$math_focus3 <- as.numeric(ifelse(HS_Focus_List$Math_Grade_Value == "3" & HS_Focus_List$ADA_VALUE<.9
                                             ,"3", ""))
-Focus_List$math_focus<-coalesce(Focus_List$math_focus1,Focus_List$math_focus2,Focus_List$math_focus3)
+HS_Focus_List$math_focus<-coalesce(HS_Focus_List$math_focus1,HS_Focus_List$math_focus2,HS_Focus_List$math_focus3)
 
-#create column for ELA_focus list eligibility based on selection criteria of grades and attendance
-Focus_List$ELA_focus1 <- as.numeric(ifelse(Focus_List$Lit_Grade_Value == "2" & Focus_List$ADA_VALUE>=.85
+#HS create column for ELA_focus list eligibility based on selection criteria of grades and attendance
+HS_Focus_List$ELA_focus1 <- as.numeric(ifelse(HS_Focus_List$Lit_Grade_Value == "2" & HS_Focus_List$ADA_VALUE>=.85
                                             ,"1", ""))
-Focus_List$ELA_focus2 <- as.numeric(ifelse(Focus_List$Lit_Grade_Value == "1" & Focus_List$ADA_VALUE>=.85
+HS_Focus_List$ELA_focus2 <- as.numeric(ifelse(HS_Focus_List$Lit_Grade_Value == "1" & HS_Focus_List$ADA_VALUE>=.85
                                             ,"2", ""))
-Focus_List$ELA_focus3 <- as.numeric(ifelse(Focus_List$Lit_Grade_Value == "3" & Focus_List$ADA_VALUE<.9
+HS_Focus_List$ELA_focus3 <- as.numeric(ifelse(HS_Focus_List$Lit_Grade_Value == "3" & HS_Focus_List$ADA_VALUE<.9
                                             ,"3", ""))
-Focus_List$ELA_focus<-coalesce(Focus_List$ELA_focus1,Focus_List$ELA_focus2,Focus_List$ELA_focus3)
+HS_Focus_List$ELA_focus<-coalesce(HS_Focus_List$ELA_focus1,HS_Focus_List$ELA_focus2,HS_Focus_List$ELA_focus3)
 
-#Format and write completed focus list table
-colnames(Focus_List)
-Focus_List$Name<-paste(Focus_List$First_Name,Focus_List$Last_Name)
-Focus_final<-Focus_List[c(54,9,5,11,15,22,36,49,53)]
-write.csv(Focus_final,"C:/Users/City Year/OneDrive - City Year/SY23 Focus List Report.csv")
+#Cut down and join HS and ES focus lists then write to drive
+HS_Focus_List$On_Track_Score<-paste("NA")
+ES_Small<-ES_Focus_List[c(9,46,5,11,15,52,22,36,60,56)]
+HS_Small<-HS_Focus_List[c(9,46,5,11,15,55,22,36,54,50)]
+Focus_List_Report<-rbind(HS_Small,ES_Small)
+write.csv(Focus_List_Report,"C:/Users/City Year/OneDrive - City Year/SY23 Focus List Report.csv")
