@@ -99,6 +99,8 @@ HS_Focus_List$ELA_focus<-coalesce(HS_Focus_List$ELA_focus1,HS_Focus_List$ELA_foc
 
 #Cut down and join HS and ES focus lists then write to drive
 HS_Focus_List$On_Track_Score<-paste("NA")
+colnames(ES_Focus_List)
+colnames(HS_Focus_List)
 ES_Small<-ES_Focus_List[c(9,46,5,11,15,52,22,36,60,56)]
 HS_Small<-HS_Focus_List[c(9,46,5,11,15,55,22,36,54,50)]
 Focus_List_Report<-rbind(HS_Small,ES_Small)
