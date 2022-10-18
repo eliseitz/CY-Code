@@ -1,4 +1,5 @@
 library(tidyverse)
+library(formattable)
 setwd("C:/Users/City Year/OneDrive - City Year/Focus List Code")
 
 #Import files
@@ -62,7 +63,7 @@ ES_Focus_List$On_Track_50 <- as.numeric(ifelse(((ES_Focus_List$Math_Grade_Value 
 ES_Focus_List$On_Track_Score<-coalesce(ES_Focus_List$On_Track_10,ES_Focus_List$On_Track_20,ES_Focus_List$On_Track_30,ES_Focus_List$On_Track_40,ES_Focus_List$On_Track_50)
 
 #ES create column for math_focus list eligibility based on selection criteria or grades and on track score
-ES_Focus_List$math_focus1 <- as.numeric(ifelse(ES_Focus_List$Math_Grade_Value == "2" & ES_Focus_List$On_Track_Score=="40"
+ES_Focus_List$math_focus1 <- as.numeric(ifelse(ES_Focus_List$Math_Grade_Value == "2" & (ES_Focus_List$On_Track_Score=="30"|ES_Focus_List$On_Track_Score=="40")
                                                ,"1", ""))
 ES_Focus_List$math_focus2 <- as.numeric(ifelse(ES_Focus_List$Math_Grade_Value == "1" & (ES_Focus_List$On_Track_Score=="30"|ES_Focus_List$On_Track_Score=="40"|ES_Focus_List$On_Track_Score=="50")
                                                ,"2", ""))
@@ -71,7 +72,7 @@ ES_Focus_List$math_focus3 <- as.numeric(ifelse(ES_Focus_List$Math_Grade_Value ==
 ES_Focus_List$math_focus<-coalesce(ES_Focus_List$math_focus1,ES_Focus_List$math_focus2,ES_Focus_List$math_focus3)
 
 #ES create column for ELA_focus list eligibility based on selection criteria or grades and on track score
-ES_Focus_List$ELA_focus1 <- as.numeric(ifelse(ES_Focus_List$Lit_Grade_Value == "2" & ES_Focus_List$ADA_VALUE=="40"
+ES_Focus_List$ELA_focus1 <- as.numeric(ifelse(ES_Focus_List$Lit_Grade_Value == "2" & (ES_Focus_List$On_Track_Score=="30"|ES_Focus_List$On_Track_Score=="40")
                                               ,"1", ""))
 ES_Focus_List$ELA_focus2 <- as.numeric(ifelse(ES_Focus_List$Lit_Grade_Value == "1" & (ES_Focus_List$ADA_VALUE=="30"|ES_Focus_List$ADA_VALUE=="40"|ES_Focus_List$ADA_VALUE=="50")
                                               ,"2", ""))
@@ -104,4 +105,5 @@ colnames(HS_Focus_List)
 ES_Small<-ES_Focus_List[c(9,46,5,11,15,52,22,36,60,56)]
 HS_Small<-HS_Focus_List[c(9,46,5,11,15,55,22,36,54,50)]
 Focus_List_Report<-rbind(HS_Small,ES_Small)
+Focus_List_Report$ADA_Percentage<-percent(Focus_List_Report$ADA_VALUE)
 write.csv(Focus_List_Report,"C:/Users/City Year/OneDrive - City Year/SY23 Focus List Report.csv")
