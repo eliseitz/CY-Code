@@ -74,9 +74,9 @@ ES_Focus_List$math_focus<-coalesce(ES_Focus_List$math_focus1,ES_Focus_List$math_
 #ES create column for ELA_focus list eligibility based on selection criteria or grades and on track score
 ES_Focus_List$ELA_focus1 <- as.numeric(ifelse(ES_Focus_List$Lit_Grade_Value == "2" & (ES_Focus_List$On_Track_Score=="30"|ES_Focus_List$On_Track_Score=="40")
                                               ,"1", ""))
-ES_Focus_List$ELA_focus2 <- as.numeric(ifelse(ES_Focus_List$Lit_Grade_Value == "1" & (ES_Focus_List$ADA_VALUE=="30"|ES_Focus_List$ADA_VALUE=="40"|ES_Focus_List$ADA_VALUE=="50")
+ES_Focus_List$ELA_focus2 <- as.numeric(ifelse(ES_Focus_List$Lit_Grade_Value == "1" & (ES_Focus_List$On_Track_Score=="30"|ES_Focus_List$On_Track_Score=="40"|ES_Focus_List$On_Track_Score=="50")
                                               ,"2", ""))
-ES_Focus_List$ELA_focus3 <- as.numeric(ifelse(ES_Focus_List$Lit_Grade_Value == "3" & ES_Focus_List$ADA_VALUE=="40"
+ES_Focus_List$ELA_focus3 <- as.numeric(ifelse(ES_Focus_List$Lit_Grade_Value == "3" & ES_Focus_List$On_Track_Score=="40"
                                               ,"3", ""))
 ES_Focus_List$ELA_focus<-coalesce(ES_Focus_List$ELA_focus1,ES_Focus_List$ELA_focus2,ES_Focus_List$ELA_focus3)
 
