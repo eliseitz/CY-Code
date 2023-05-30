@@ -13,7 +13,7 @@ ACM_Addresses2<-c("ACM+ADDRESS+3","ACM+ADDRESS+4","ADD+AS+MANY+ADDRESSES+AS+YOU+
 School_Addresses<-c("SCHOOL+ADDRESS+1","SCHOOL+ADDRESS+2","ADD+AS+MANY+ADDRESSES+AS+YOU+WANT+UP+TO+25")
 
 #Calculate commute matrix for each ACM address list and each School address list
-#Notes: Ensure that the mode matches the ACMs selected form of transportation. Transit matrices should include a arrival time set with the arr_time variable. Driving matrices should include a departure time of 7am and traffic_model set to "best_guess".
+#Notes: Ensure that the mode matches the ACMs selected form of transportation. Transit matrices should include a arrival time set to the first day of school service with the arr_time variable. Driving matrices should include a departure time of 7am on the first day of school service and traffic_model set to "best_guess".
 T_commutes1<- gmapsdistance(origin = ACM_Addresses1, 
               destination = School_Addresses, 
               combinations = "all",
